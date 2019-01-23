@@ -257,6 +257,20 @@ class CacheManager {
     if (path == null) {
       return null;
     }
+
+    if (await new File(path).exists() == false) {
+      if (showDebugLogs) print('Reloading file for $url');
+      var newCacheData =
+          await _downloadFile(url, headers, cacheObject.lock, eTag: '');
+      if (newCacheData != null) {
+        _cacheData[url] = newCacheData;
+      }
+      path = await _cacheData[url].getFilePath();
+      if (path == null) {
+        return null;
+      }
+    }
+
     return new File(path);
   }
 
